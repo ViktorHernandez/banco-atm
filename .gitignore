@@ -1,0 +1,32 @@
+# Dependencias
+node_modules/
+
+# Compilados
+dist/
+build/
+*.tsbuildinfo
+
+# Variables de entorno
+.env
+.env.local
+.env.*.local
+
+# Pruebas
+coverage/
+.nyc_output/
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Editores
+.vscode/*
+!.vscode/extensions.json
+.idea/

@@ -1,0 +1,6 @@
+export enum TipoTransaccion {
+  RETIRO = 'RETIRO',
+  DEPOSITO = 'DEPOSITO',
+  TRANSFERENCIA = 'TRANSFERENCIA',
+  PAGO_SERVICIO = 'PAGO_SERVICIO',
+}

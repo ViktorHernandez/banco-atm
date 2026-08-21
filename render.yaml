@@ -1,0 +1,32 @@
+services:
+  - type: web
+    name: banco-atm-api
+    runtime: node
+    plan: free
+    region: virginia
+    rootDir: backend
+    buildCommand: npm ci && npm run build
+    startCommand: npm run start:prod
+    healthCheckPath: /
+    envVars:
+      - key: NODE_VERSION
+        value: '20'
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DATABASE_SSL
+        value: 'true'
+      - key: JWT_EXPIRES_IN
+        value: 15m
+      - key: CORS_ORIGIN
+        sync: false
+      - key: SERVE_ATM
+        value: 'false'
+
+  - type: web
+    name: banco-atm-cajero
+    runtime: static
+    rootDir: atm-client
+    buildCommand: ''
+    staticPublishPath: .

@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cajero Automático - Banco ATM</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="cajero">
+      <header class="cajero__encabezado">
+        <div>
+          <span class="cajero__banco" id="etiquetaBanco">Banco ATM</span>
+          <span class="cajero__id" id="etiquetaCajero">ATM-001</span>
+        </div>
+        <div class="cajero__estado">
+          <span id="indicadorConexion" class="indicador indicador--desconocido"></span>
+          <span id="textoConexion">Verificando enlace...</span>
+          <button type="button" id="botonConfiguracion" class="boton-icono" title="Configurar API">
+            API
+          </button>
+        </div>
+      </header>
+
+      <main class="cajero__pantalla" id="pantallaPrincipal">
+        <section class="pantalla activa" data-pantalla="inicio">
+          <h1 class="pantalla__titulo">Bienvenido</h1>
+          <p class="pantalla__texto">
+            Inserte su tarjeta para comenzar. Este cajero opera contra la API
+            bancaria común del ecosistema.
+          </p>
+          <div class="acciones acciones--centro">
+            <button type="button" class="boton boton--principal" data-accion="insertar-tarjeta">
+              Insertar tarjeta
+            </button>
+          </div>
+          <p class="pantalla__nota" id="notaConexion"></p>
+        </section>
+
+        <section class="pantalla" data-pantalla="tarjeta">
+          <h2 class="pantalla__titulo">Número de tarjeta</h2>
+          <p class="pantalla__texto">Capture los 16 dígitos de su tarjeta.</p>
+          <div class="entrada" id="entradaTarjeta">----</div>
+          <div class="teclado" data-teclado="tarjeta"></div>
+          <div class="acciones">
+            <button type="button" class="boton boton--secundario" data-accion="cancelar-sesion">
+              Cancelar
+            </button>
+            <button type="button" class="boton boton--principal" data-accion="confirmar-tarjeta">
+              Continuar
+            </button>
+          </div>
+        </section>
+
+        <section class="pantalla" data-pantalla="pin">
+          <h2 class="pantalla__titulo">Ingrese su PIN</h2>
+          <p class="pantalla__texto" id="textoTarjetaEnmascarada"></p>
+          <div class="entrada entrada--pin" id="entradaPin"></div>
+          <div class="teclado" data-teclado="pin"></div>
+          <div class="acciones">
+            <button type="button" class="boton boton--secundario" data-accion="cancelar-sesion">
+              Cancelar
+            </button>
+            <button type="button" class="boton boton--principal" data-accion="confirmar-pin">
+              Aceptar
+            </button>
+          </div>
+        </section>
+
+        <section class="pantalla" data-pantalla="menu">
+          <h2 class="pantalla__titulo">Menú principal</h2>
+          <p class="pantalla__texto" id="textoBienvenida"></p>
+          <div class="menu">
+            <button type="button" class="boton boton--menu" data-ir="saldo">Consultar saldo</button>
+            <button type="button" class="boton boton--menu" data-ir="retiro">Retiro de efectivo</button>
+            <button type="button" class="boton boton--menu" data-ir="deposito">Depósito</button>
+            <button type="button" class="boton boton--menu" data-ir="transferencia">Transferencia</button>
+            <button type="button" class="boton boton--menu" data-ir="movimientos">Movimientos</button>
+            <button type="button" class="boton boton--menu" data-ir="pago">Pago de servicios</button>
+            <button type="button" class="boton boton--menu" data-ir="cambio-pin">Cambiar PIN</button>
+            <button type="button" class="boton boton--menu" data-ir="tarjeta-gestion">Mi tarjeta</button>
+          </div>
+          <div class="acciones acciones--centro">
+            <button type="button" class="boton boton--secundario" data-accion="cerrar-sesion">
+              Finalizar y retirar tarjeta
+            </button>
+          </div>
+        </section>
+
+        <section class="pantalla" data-pantalla="saldo">
+          <h2 class="pantalla__titulo">Saldo disponible</h2>
+          <div class="tarjeta-dato">
+            <span class="tarjeta-dato__etiqueta">Cuenta</span>
+            <span class="tarjeta-dato__valor" id="saldoCuenta">—</span>
+          </div>
+          <div class="tarjeta-dato tarjeta-dato--destacado">
+            <span class="tarjeta-dato__etiqueta">Saldo</span>
+            <span class="tarjeta-dato__valor" id="saldoMonto">—</span>
+          </div>
+          <p class="pantalla__nota" id="saldoFecha"></p>
+          <div class="acciones">
+            <button type="button" class="boton boton--secundario" data-accion="volver-menu">Menú</button>
+          </div>
+        </section>
+
+        <section class="pantalla" data-pantalla="retiro">
+          <h2 class="pantalla__titulo">Retiro de efectivo</h2>
+          <p class="pantalla__texto">
+            <span id="notaRetiro">Seleccione un monto o capture otra cantidad.</span>
+          </p>
+          <div class="montos" id="montosRetiro"></div>
+          <label class="campo">
+            <span class="campo__etiqueta">Otro monto</span>
+            <input type="number" id="montoRetiro" class="campo__control" inputmode="numeric" />
+          </label>
+          <div class="acciones">
+            <button type="button" class="boton boton--secundario" data-accion="volver-menu">Menú</button>
+            <button type="button" class="boton boton--principal" data-accion="confirmar-retiro">Retirar</button>
+          </div>
+        </section>
+
+        <section class="pantalla" data-pantalla="deposito">
+          <h2 class="pantalla__titulo">Depósito de efectivo</h2>
+          <p class="pantalla__texto">
+            <span id="notaDeposito">Coloque los billetes en la ranura.</span>
+          </p>
+          <div class="montos" id="montosDeposito"></div>
+          <label class="campo">
+            <span class="campo__etiqueta">Otro monto</span>
+            <input type="number" id="montoDeposito" class="campo__control" inputmode="numeric" />
+          </label>
+          <div class="acciones">
+            <button type="button" class="boton boton--secundario" data-accion="volver-menu">Menú</button>
+            <button type="button" class="boton boton--principal" data-accion="confirmar-deposito">Depositar</button>
+          </div>
+        </section>
+
+        <section class="pantalla" data-pantalla="transferencia">
+          <h2 class="pantalla__titulo">Transferencia</h2>
+          <p class="pantalla__texto">Transferencias entre cuentas de este banco.</p>
+          <label class="campo">
+            <span class="campo__etiqueta">Cuenta destino</span>
+            <input type="text" id="cuentaDestino" class="campo__control" inputmode="numeric" placeholder="1000000002" />
+          </label>
+          <label class="campo">
+            <span class="campo__etiqueta">Monto</span>
+            <input type="number" id="montoTransferencia" class="campo__control" min="1" step="0.01" inputmode="decimal" />
+          </label>
+          <label class="campo">
+            <span class="campo__etiqueta">Concepto (opcional)</span>
+            <input type="text" id="conceptoTransferencia" class="campo__control" maxlength="120" />
+          </label>
+          <div class="acciones">
+            <button type="button" class="boton boton--secundario" data-accion="volver-menu">Menú</button>
+            <button type="button" class="boton boton--principal" data-accion="confirmar-transferencia">Transferir</button>
+          </div>
+        </section>
+
+        <section class="pantalla" data-pantalla="movimientos">
+          <h2 class="pantalla__titulo">Últimos movimientos</h2>
+          <div class="movimientos" id="listaMovimientos"></div>
+          <div class="acciones">
+            <button type="button" class="boton boton--secundario" data-accion="volver-menu">Menú</button>
+          </div>
+        </section>
+
+        <section class="pantalla" data-pantalla="pago">
+          <h2 class="pantalla__titulo">Pago de servicios</h2>
+          <label class="campo">
+            <span class="campo__etiqueta">Proveedor</span>
+            <select id="proveedorServicio" class="campo__control"></select>
+          </label>
+          <p class="pantalla__nota" id="notaProveedor"></p>
+          <label class="campo">
+            <span class="campo__etiqueta">Referencia</span>
+            <input type="text" id="referenciaServicio" class="campo__control" maxlength="20" />
+          </label>
+          <label class="campo">
+            <span class="campo__etiqueta">Monto</span>
+            <input type="number" id="montoServicio" class="campo__control" min="1" step="0.01" inputmode="decimal" />
+          </label>
+          <div class="acciones">
+            <button type="button" class="boton boton--secundario" data-accion="volver-menu">Menú</button>
+            <button type="button" class="boton boton--principal" data-accion="confirmar-pago">Pagar</button>
+          </div>
+        </section>
+
+        <section class="pantalla" data-pantalla="cambio-pin">
+          <h2 class="pantalla__titulo">Cambio de PIN</h2>
+          <label class="campo">
+            <span class="campo__etiqueta">PIN actual</span>
+            <input type="password" id="pinActual" class="campo__control" maxlength="6" inputmode="numeric" />
+          </label>
+          <label class="campo">
+            <span class="campo__etiqueta">PIN nuevo</span>
+            <input type="password" id="pinNuevo" class="campo__control" maxlength="6" inputmode="numeric" />
+          </label>
+          <label class="campo">
+            <span class="campo__etiqueta">Confirmar PIN nuevo</span>
+            <input type="password" id="pinConfirmacion" class="campo__control" maxlength="6" inputmode="numeric" />
+          </label>
+          <div class="acciones">
+            <button type="button" class="boton boton--secundario" data-accion="volver-menu">Menú</button>
+            <button type="button" class="boton boton--principal" data-accion="confirmar-cambio-pin">Cambiar</button>
+          </div>
+        </section>
+
+        <section class="pantalla" data-pantalla="tarjeta-gestion">
+          <h2 class="pantalla__titulo">Mi tarjeta</h2>
+          <div class="tarjeta-dato">
+            <span class="tarjeta-dato__etiqueta">Número</span>
+            <span class="tarjeta-dato__valor" id="tarjetaNumero">—</span>
+          </div>
+          <div class="tarjeta-dato">
+            <span class="tarjeta-dato__etiqueta">Estado</span>
+            <span class="tarjeta-dato__valor" id="tarjetaEstado">—</span>
+          </div>
+          <div class="tarjeta-dato">
+            <span class="tarjeta-dato__etiqueta">Intentos fallidos</span>
+            <span class="tarjeta-dato__valor" id="tarjetaIntentos">—</span>
+          </div>
+          <p class="pantalla__nota">
+            El bloqueo finaliza su sesión de inmediato. El desbloqueo se realiza
+            desde la app móvil o el portal web.
+          </p>
+          <div class="acciones">
+            <button type="button" class="boton boton--secundario" data-accion="volver-menu">Menú</button>
+            <button type="button" class="boton boton--peligro" data-accion="confirmar-bloqueo">
+              Bloquear tarjeta
+            </button>
+          </div>
+        </section>
+
+        <section class="pantalla" data-pantalla="comprobante">
+          <h2 class="pantalla__titulo">Comprobante</h2>
+          <pre class="comprobante" id="textoComprobante"></pre>
+          <div class="acciones">
+            <button type="button" class="boton boton--secundario" data-accion="imprimir-comprobante">
+              Imprimir
+            </button>
+            <button type="button" class="boton boton--principal" data-accion="volver-menu">
+              Menú principal
+            </button>
+          </div>
+        </section>
+
+        <section class="pantalla" data-pantalla="mensaje">
+          <h2 class="pantalla__titulo" id="mensajeTitulo">Aviso</h2>
+          <p class="pantalla__texto pantalla__texto--grande" id="mensajeTexto"></p>
+          <div class="acciones acciones--centro">
+            <button type="button" class="boton boton--principal" id="botonMensaje">Continuar</button>
+          </div>
+        </section>
+      </main>
+
+      <footer class="cajero__pie">
+        <span id="avisoInactividad"></span>
+        <span id="avisoApi"></span>
+      </footer>
+
+      <div class="capa-carga" id="capaCarga" hidden>
+        <div class="capa-carga__caja">
+          <div class="capa-carga__giro"></div>
+          <span id="textoCarga">Procesando operación...</span>
+        </div>
+      </div>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>
